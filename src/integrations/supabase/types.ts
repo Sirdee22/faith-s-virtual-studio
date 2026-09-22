@@ -14,7 +14,293 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      content_blocks: {
+        Row: {
+          data: Json
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          data?: Json
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          data?: Json
+          key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      platform_links: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          kind: string
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      process_steps: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          body: string | null
+          category: string | null
+          created_at: string
+          gallery: Json
+          id: string
+          image_url: string | null
+          link_url: string | null
+          published: boolean
+          sort_order: number
+          summary: string | null
+          title: string
+          tools: Json
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          gallery?: Json
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          published?: boolean
+          sort_order?: number
+          summary?: string | null
+          title?: string
+          tools?: Json
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          gallery?: Json
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          published?: boolean
+          sort_order?: number
+          summary?: string | null
+          title?: string
+          tools?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          description: string
+          icon: string | null
+          id: string
+          image_url: string | null
+          items: Json
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          description?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          items?: Json
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          description?: string
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          items?: Json
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skill_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          proficiency: number | null
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          proficiency?: number | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          proficiency?: number | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skills_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "skill_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonials: {
+        Row: {
+          client_name: string
+          client_role: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          published: boolean
+          quote: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          client_name?: string
+          client_role?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          quote?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string
+          client_role?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          quote?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
