@@ -23,7 +23,7 @@ export const getSiteContent = createServerFn({ method: "GET" }).handler(
 
       const blockMap: SitePayload["blocks"] = {};
       for (const row of blocks.data ?? []) {
-        blockMap[row.key as string] = (row.data ?? {}) as Record<string, unknown>;
+        blockMap[row.key as string] = (row.data ?? {}) as SitePayload["blocks"][string];
       }
 
       return withDefaults({

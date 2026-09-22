@@ -71,7 +71,20 @@ export type PlatformLink = {
   published: boolean;
 };
 
-export type Blocks = Record<string, Record<string, unknown>>;
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
+export type Block = Record<string, Json>;
+export type Blocks = Record<string, Block>;
+
+export function str(block: Block | undefined, key: string, fallback = ""): string {
+  const value = block?.[key];
+  return typeof value === "string" ? value : fallback;
+}
+
+export function list<T = Json>(block: Block | undefined, key: string): T[] {
+  const value = block?.[key];
+  return Array.isArray(value) ? (value as T[]) : [];
+}
 
 export type SitePayload = {
   blocks: Blocks;
