@@ -95,8 +95,8 @@ export function withDefaults(payload: SitePayload): SitePayload {
   for (const key of Object.keys(DEFAULT_BLOCKS)) {
     blocks[key] = { ...DEFAULT_BLOCKS[key], ...(payload.blocks?.[key] ?? {}) };
   }
-  for (const key of Object.keys(payload.blocks ?? {})) {
-    if (!blocks[key]) blocks[key] = payload.blocks[key];
+  for (const [key, value] of Object.entries(payload.blocks ?? {})) {
+    if (!blocks[key]) blocks[key] = value;
   }
   return { ...payload, blocks };
 }
