@@ -87,7 +87,7 @@ export function BlockEditor({
   description,
 }: {
   blockKey: string;
-  block?: Block;
+  block?: Block | undefined;
   fields: FieldDef[];
   title: string;
   description?: string;
@@ -146,7 +146,7 @@ export function BlockListEditor({
   description,
 }: {
   blockKey: string;
-  block?: Block;
+  block?: Block | undefined;
   listKey: string;
   title: string;
   description?: string;
