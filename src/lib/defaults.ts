@@ -1,4 +1,4 @@
-import portrait from "@/assets/faith-portrait.png.asset.json";
+const portrait = { url: "/faith-portrait.png" };
 import type { Blocks, SitePayload } from "./site-types";
 
 /**
