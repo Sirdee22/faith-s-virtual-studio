@@ -16,7 +16,7 @@ import {
   User,
   Wrench,
 } from "lucide-react";
-import { adminGetContent, adminLogout } from "@/lib/admin.functions";
+import { adminGetContent, adminLogout, adminStatus } from "@/lib/admin.functions";
 import type { Json } from "@/lib/site-types";
 import { cn } from "@/lib/utils";
 import { BlockEditor, BlockListEditor, CollectionManager } from "./editors";
@@ -60,11 +60,16 @@ export function AdminApp() {
   const [section, setSection] = useState<Section>("overview");
   const [openNew, setOpenNew] = useState<Section | null>(null);
   const getContent = useServerFn(adminGetContent);
+  const getStatus = useServerFn(adminStatus);
   const logout = useServerFn(adminLogout);
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-content"],
     queryFn: () => getContent(),
+  });
+  const { data: status } = useQuery({
+    queryKey: ["admin-status"],
+    queryFn: () => getStatus(),
   });
 
   const go = (s: Section, create = false) => {
@@ -85,7 +90,12 @@ export function AdminApp() {
     <div className="min-h-screen bg-cream/40">
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-          <p className="font-display font-semibold">Website editor</p>
+          <div>
+            <p className="font-display font-semibold">Website editor</p>
+            {status?.email ? (
+              <p className="text-xs text-muted-foreground">Signed in as {status.email}</p>
+            ) : null}
+          </div>
           <div className="flex items-center gap-2">
             <a
               href="/"
