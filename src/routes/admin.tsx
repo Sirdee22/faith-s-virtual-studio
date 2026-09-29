@@ -37,6 +37,7 @@ function AdminPage() {
 function Login() {
   const login = useServerFn(adminLogin);
   const qc = useQueryClient();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,15 +50,11 @@ function Login() {
           setBusy(true);
           setError(null);
           try {
-            const res = await login({ data: { password } });
+            const res = await login({ data: { email, password } });
             if (res.ok) {
               await qc.invalidateQueries({ queryKey: ["admin-status"] });
             } else {
-              setError(
-                res.reason === "not-configured"
-                  ? "The admin password hasn't been set up yet."
-                  : "That password isn't right. Please try again.",
-              );
+              setError("That email or password isn't right. Please try again.");
             }
           } catch {
             setError("Something went wrong. Please try again.");
@@ -69,8 +66,20 @@ function Login() {
       >
         <p className="eyebrow">PRIVATE</p>
         <h1 className="mt-2 text-2xl font-semibold">Website editor</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Enter your password to continue.</p>
-        <label htmlFor="admin-password" className="mt-6 block text-sm font-medium">
+        <p className="mt-2 text-sm text-muted-foreground">Sign in to continue.</p>
+        <label htmlFor="admin-email" className="mt-6 block text-sm font-medium">
+          Email
+        </label>
+        <input
+          id="admin-email"
+          type="email"
+          autoComplete="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mt-2 w-full rounded-lg border border-border px-3.5 py-2.5 text-sm outline-none focus:border-foreground"
+          required
+        />
+        <label htmlFor="admin-password" className="mt-4 block text-sm font-medium">
           Password
         </label>
         <input
