@@ -53,11 +53,14 @@ function Login() {
             const res = await login({ data: { email, password } });
             if (res.ok) {
               await qc.invalidateQueries({ queryKey: ["admin-status"] });
+            } else if (res.reason === "error") {
+              setError(res.message);
             } else {
               setError("That email or password isn't right. Please try again.");
             }
-          } catch {
-            setError("Something went wrong. Please try again.");
+          } catch (err) {
+            console.error("[login] request failed:", err);
+            setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
           } finally {
             setBusy(false);
           }
