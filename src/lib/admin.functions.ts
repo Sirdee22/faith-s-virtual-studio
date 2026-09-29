@@ -35,7 +35,13 @@ export const adminLogin = createServerFn({ method: "POST" })
       p_email: data.email.toLowerCase(),
       p_password: data.password,
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      // Logged server-side so the real cause is visible in hosting logs,
+      // and returned to the client (temporarily) so it shows on screen
+      // while diagnosing. Tighten this back up once login is confirmed working.
+      console.error("[adminLogin] verify_admin_login rpc failed:", error);
+      return { ok: false as const, reason: "error" as const, message: error.message };
+    }
     const user = rows?.[0] as { id: string; email: string } | undefined;
     if (!user) {
       return { ok: false as const, reason: "invalid" as const };
