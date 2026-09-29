@@ -10,24 +10,41 @@ function assertCollection(value: string): CollectionName {
 }
 
 export const adminStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const { isAdmin } = await import("./admin-session.server");
-  return { authenticated: await isAdmin() };
+  const { isAdmin, sessionConfig } = await import("./admin-session.server");
+  const authenticated = await isAdmin();
+  if (!authenticated) return { authenticated: false as const, email: null };
+  const { useSession } = await import("@tanstack/react-start/server");
+  const session = await useSession<{ admin?: boolean; email?: string }>(sessionConfig());
+  return { authenticated: true as const, email: session.data.email ?? null };
 });
 
 export const adminLogin = createServerFn({ method: "POST" })
-  .inputValidator((data: { password: string }) => ({ password: String(data?.password ?? "") }))
+  .inputValidator((data: { email: string; password: string }) => ({
+    email: String(data?.email ?? "").trim(),
+    password: String(data?.password ?? ""),
+  }))
   .handler(async ({ data }) => {
-    const { passwordMatches, sessionConfig } = await import("./admin-session.server");
-    const { useSession } = await import("@tanstack/react-start/server");
-    const expected = process.env["ADMIN_PASSWORD"];
-    if (!expected) {
-      return { ok: false as const, reason: "not-configured" as const };
-    }
-    if (!data.password || !(await passwordMatches(data.password, expected))) {
+    if (!data.email || !data.password) {
       return { ok: false as const, reason: "invalid" as const };
     }
-    const session = await useSession<{ admin?: boolean }>(sessionConfig());
-    await session.update({ admin: true });
+    const { sessionConfig } = await import("./admin-session.server");
+    const { useSession } = await import("@tanstack/react-start/server");
+    const { adminClient } = await import("./supabase.server");
+
+    const { data: rows, error } = await adminClient().rpc("verify_admin_login", {
+      p_email: data.email.toLowerCase(),
+      p_password: data.password,
+    });
+    if (error) throw new Error(error.message);
+    const user = rows?.[0] as { id: string; email: string } | undefined;
+    if (!user) {
+      return { ok: false as const, reason: "invalid" as const };
+    }
+
+    const session = await useSession<{ admin?: boolean; userId?: string; email?: string }>(
+      sessionConfig(),
+    );
+    await session.update({ admin: true, userId: user.id, email: user.email });
     return { ok: true as const, reason: null };
   });
 
