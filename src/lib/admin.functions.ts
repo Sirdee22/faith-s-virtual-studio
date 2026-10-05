@@ -31,6 +31,11 @@ export const adminLogin = createServerFn({ method: "POST" })
     const { useSession } = await import("@tanstack/react-start/server");
     const { adminClient } = await import("./supabase.server");
 
+    // Temporary diagnostic: confirms which Supabase project this deployment
+    // is actually talking to. Safe to log — a project URL isn't sensitive.
+    // Remove this line once login is confirmed working.
+    console.error("[adminLogin] SUPABASE_URL at runtime is:", process.env["SUPABASE_URL"]);
+
     const { data: rows, error } = await adminClient().rpc("verify_admin_login", {
       p_email: data.email.toLowerCase(),
       p_password: data.password,
