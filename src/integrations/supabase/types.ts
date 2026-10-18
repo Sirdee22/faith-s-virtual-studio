@@ -107,6 +107,7 @@ export type Database = {
           id: string
           image_url: string | null
           link_url: string | null
+          video_url: string | null
           published: boolean
           sort_order: number
           summary: string | null
@@ -122,6 +123,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           link_url?: string | null
+          video_url?: string | null
           published?: boolean
           sort_order?: number
           summary?: string | null
@@ -137,6 +139,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           link_url?: string | null
+          video_url?: string | null
           published?: boolean
           sort_order?: number
           summary?: string | null
