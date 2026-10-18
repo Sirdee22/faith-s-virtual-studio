@@ -39,6 +39,7 @@ export type Project = {
   gallery: string[];
   tools: string[];
   link_url: string | null;
+  video_url: string | null;
   sort_order: number;
   published: boolean;
 };
