@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Play } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Reveal, SectionHeading } from "./Reveal";
 import { mediaUrl, str, type Block, type Project } from "@/lib/site-types";
+import { parseVideo, type VideoSource } from "@/lib/video";
 import { cn } from "@/lib/utils";
 
 export function Portfolio({ block, projects }: { block?: Block; projects: Project[] }) {
@@ -71,7 +72,9 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
 
             <ul className="mt-10 grid gap-6 md:grid-cols-2">
               {visible.map((project, index) => {
-                const image = mediaUrl(project.image_url);
+                const video = parseVideo(project.video_url);
+                const image =
+                  mediaUrl(project.image_url) ?? (video?.kind === "embed" ? video.thumb : undefined);
                 return (
                   <Reveal as="li" key={project.id} delay={index * 60}>
                     <button
@@ -79,7 +82,7 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
                       onClick={() => setActive(project)}
                       className="lift group block w-full overflow-hidden rounded-2xl border border-border bg-background text-left"
                     >
-                      <div className="overflow-hidden bg-cream">
+                      <div className="relative overflow-hidden bg-cream">
                         {image ? (
                           <img
                             src={image}
@@ -89,9 +92,17 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
                           />
                         ) : (
                           <div className="grid aspect-[16/10] w-full place-items-center text-sm text-muted-foreground">
-                            No image
+                            {video ? "" : "No image"}
                           </div>
                         )}
+                        {video ? (
+                          <span
+                            aria-hidden
+                            className="absolute top-1/2 left-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-background/90 text-foreground shadow-lg transition-transform duration-300 group-hover:scale-110"
+                          >
+                            <Play className="h-5 w-5 translate-x-0.5 fill-current" />
+                          </span>
+                        ) : null}
                       </div>
                       <div className="p-7">
                         {project.category ? <p className="eyebrow">{project.category}</p> : null}
@@ -126,7 +137,13 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
                 ) : null}
               </DialogHeader>
 
-              {mediaUrl(active.image_url) ? (
+              {parseVideo(active.video_url) ? (
+                <VideoPlayer
+                  video={parseVideo(active.video_url) as VideoSource}
+                  title={active.title}
+                  poster={mediaUrl(active.image_url)}
+                />
+              ) : mediaUrl(active.image_url) ? (
                 <img
                   src={mediaUrl(active.image_url)}
                   alt={active.title}
@@ -141,7 +158,7 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
               ) : null}
 
               {active.gallery?.length ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {active.gallery.map((src) => (
                     <img
                       key={src}
@@ -183,5 +200,41 @@ export function Portfolio({ block, projects }: { block?: Block; projects: Projec
         </DialogContent>
       </Dialog>
     </section>
+  );
+}
+
+function VideoPlayer({
+  video,
+  title,
+  poster,
+}: {
+  video: VideoSource;
+  title: string;
+  poster?: string | undefined;
+}) {
+  return (
+    <div className="aspect-video w-full overflow-hidden rounded-xl bg-black">
+      {video.kind === "embed" ? (
+        <iframe
+          src={video.src}
+          title={`${title} video`}
+          className="h-full w-full border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      ) : (
+        <video
+          src={video.src}
+          poster={poster}
+          controls
+          playsInline
+          preload="metadata"
+          className="h-full w-full"
+        >
+          Your browser cannot play this video.
+        </video>
+      )}
+    </div>
   );
 }
